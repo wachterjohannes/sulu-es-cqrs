@@ -35,11 +35,11 @@ class Page
     private $title;
 
     /**
-     * @param string $uuid
+     * @param string $id
      */
-    public function __construct($uuid)
+    public function __construct($id)
     {
-        $this->id = Uuid::uuid4();
+        $this->id = $id;
     }
 
     /**

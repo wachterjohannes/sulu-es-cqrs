@@ -95,3 +95,8 @@ sulu_custom_urls_api:
 sulu_search:
     resource: "@SuluSearchBundle/Resources/config/routing.yml"
     prefix: /admin/search
+
+app.page:
+    type: rest
+    resource: "@AppBundle/Controller/PageController.php"
+    prefix: /admin/api

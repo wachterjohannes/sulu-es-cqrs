@@ -51,7 +51,7 @@ class Event implements EventInterface
         $this->index = $index;
         $this->data = $data;
 
-        $this->id = Uuid::uuid4();
+        $this->id = Uuid::uuid4()->toString();
         $this->createdAt = new \DateTime();
     }
 

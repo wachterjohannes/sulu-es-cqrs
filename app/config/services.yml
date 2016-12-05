@@ -36,3 +36,16 @@ services:
         class: AppBundle\Entity\EventRepository
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['AppBundle:Event']
+
+    app.admin:
+        class: AppBundle\Admin\AppAdmin
+        arguments: ['%sulu_admin.name%']
+        tags:
+            - {name: 'sulu.admin'}
+            - {name: 'sulu.context', context: 'admin'}
+
+    app.content_navigation.pages:
+        class: AppBundle\Admin\PagesNavigationProvider
+        tags:
+            - {name: 'sulu_admin.content_navigation', alias: 'pages'}
+            - {name: 'sulu.context', context: 'admin'}

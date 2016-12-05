@@ -1,7 +1,14 @@
-# Sulu Minimal Edition
+# Sulu ES CQRS
 
-Welcome to the Sulu Minimal Edition - a fully-functional Sulu application that you can use as the skeleton for your new
-applications.
+This repository implements a "different" content-module. It is used to collect different ideas for future content-store.
+
+Following features will be tested here:
+
+* Event-Sourcing for pages/excerpt/seo
+* CQRS for managing a view (doctrine-entity) and a write-model (events)
+* Content-Types
+  * Scalar (string, int, date, json_serializable)
+  * Reference (single and multiple)
 
 ## Installation
 

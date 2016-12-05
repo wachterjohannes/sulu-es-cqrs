@@ -3,8 +3,8 @@
 namespace AppBundle\Manager;
 
 use AppBundle\CQRS\Page\Create\Command as CreateCommand;
-use AppBundle\CQRS\Page\Update\Command as UpdateCommand;
 use AppBundle\CQRS\Page\Remove\Command as RemoveCommand;
+use AppBundle\CQRS\Page\Update\Command as UpdateCommand;
 use AppBundle\Entity\Page;
 use AppBundle\Model\PageRepositoryInterface;
 use Rhumsaa\Uuid\Uuid;
@@ -32,9 +32,14 @@ class PageManager
         $this->commandBus = $commandBus;
     }
 
+    public function find($id)
+    {
+        return $this->pageRepository->findById($id);
+    }
+
     public function create($data)
     {
-        $id = Uuid::uuid4();
+        $id = Uuid::uuid4()->toString();
         $this->commandBus->handle(new CreateCommand(Page::class, $id, $data));
 
         return $this->pageRepository->findById($id);
