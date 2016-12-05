@@ -1,9 +1,38 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
-parameters:
-#    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    event_store:
+        class: Sulu\Component\EventStore\EventStore
+        arguments: ['@app.repository.event']
+
+    command_bus:
+        class: Sulu\Component\CQRS\CommandBus
+        arguments: ['@app.repository.event', '@event_store']
+        calls:
+            - ['register', ['AppBundle\CQRS\Page\Create\Command', '@app.handler.create_page']]
+            - ['register', ['AppBundle\CQRS\Page\Update\Command', '@app.handler.update_page']]
+            - ['register', ['AppBundle\CQRS\Page\Remove\Command', '@app.handler.remove_page']]
+
+    app.handler.create_page:
+        class: AppBundle\CQRS\Page\Create\Handler
+        arguments: ['@app.repository.page']
+
+    app.handler.update_page:
+        class: AppBundle\CQRS\Page\Update\Handler
+        arguments: ['@app.repository.page']
+
+    app.handler.remove_page:
+        class: AppBundle\CQRS\Page\Remove\Handler
+        arguments: ['@app.repository.page']
+
+    app.manager.page:
+        class: AppBundle\Manager\PageManager
+        arguments: ['@app.repository.page', '@command_bus']
+
+    app.repository.page:
+        class: AppBundle\Entity\PageRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['AppBundle:Page']
+
+    app.repository.event:
+        class: AppBundle\Entity\EventRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['AppBundle:Event']
