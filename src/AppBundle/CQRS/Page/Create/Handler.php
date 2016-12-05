@@ -33,8 +33,8 @@ class Handler implements HandlerInterface
     public function handle(Command $command, EventInterface $event)
     {
         $page = $this->pageRepository->create($command->getEntityId());
-        $this->getProperty('title')->setValue($page, $command->getData()['title']);
-        $this->getProperty('offset')->setValue($page, $event->getIndex());
+        $this->getProperty('title', $page)->setValue($page, $command->getData()['title']);
+        $this->getProperty('offset', $page)->setValue($page, $event->getIndex());
         $this->pageRepository->save($page);
     }
 }

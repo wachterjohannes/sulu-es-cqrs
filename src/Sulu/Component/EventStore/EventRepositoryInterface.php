@@ -5,11 +5,13 @@ namespace Sulu\Component\EventStore;
 interface EventRepositoryInterface
 {
     /**
+     * @param string $id
+     * @param string $stream
      * @param mixed $data
      *
      * @return EventInterface
      */
-    public function create($data);
+    public function create($id, $stream, $data);
 
     /**
      * @param EventInterface $event

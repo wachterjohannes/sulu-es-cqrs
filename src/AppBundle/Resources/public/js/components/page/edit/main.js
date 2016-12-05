@@ -115,7 +115,7 @@ define(['jquery'], function($) {
             } else if (action === 'new') {
                 this.sandbox.emit('sulu.router.navigate', 'pages/add');
             } else if (!this.options.id) {
-                this.sandbox.emit('sulu.router.navigate', 'pages/edit:' + data.id);
+                this.sandbox.emit('sulu.router.navigate', 'pages/edit:' + data.id + '/details');
             }
         }
     };

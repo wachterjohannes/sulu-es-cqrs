@@ -19,6 +19,13 @@ class Event implements EventInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
+    private $eventId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="guid")
+     */
     private $id;
 
     /**
@@ -27,6 +34,13 @@ class Event implements EventInterface
      * @ORM\Column(type="bigint", name="event_index")
      */
     private $index;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="guid")
+     */
+    private $stream;
 
     /**
      * @var mixed
@@ -43,26 +57,46 @@ class Event implements EventInterface
     private $createdAt;
 
     /**
+     * @param string $id
+     * @param string $stream
      * @param int $index
      * @param mixed $data
      */
-    public function __construct($index, $data)
+    public function __construct($id, $stream, $index, $data)
     {
+        $this->id = $id;
+        $this->stream = $stream;
         $this->index = $index;
         $this->data = $data;
 
-        $this->id = Uuid::uuid4()->toString();
+        $this->eventId = Uuid::uuid4()->toString();
         $this->createdAt = new \DateTime();
     }
 
     /**
-     * Returns id.
+     * Returns eventId.
      *
      * @return string
+     */
+    public function getEventId()
+    {
+        return $this->eventId;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStream()
+    {
+        return $this->stream;
     }
 
     /**
@@ -82,38 +116,10 @@ class Event implements EventInterface
     }
 
     /**
-     * Set data.
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    /**
-     * Set createdAt.
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 }

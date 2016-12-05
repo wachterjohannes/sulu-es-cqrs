@@ -12,14 +12,18 @@ class EventRepository extends EntityRepository implements EventRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function create($data)
+    public function create($id, $stream, $data)
     {
         // TODO lock-handling?
 
         $query = $this->createQueryBuilder('event')
             ->select('event.index')
+            ->where('event.stream = :stream')
+            ->andWhere('event.id = :id')
             ->orderBy('event.index', 'desc')
             ->setMaxResults(1)
+            ->setParameter('stream', $stream)
+            ->setParameter('id', $id)
             ->getQuery();
 
         try {
@@ -28,7 +32,7 @@ class EventRepository extends EntityRepository implements EventRepositoryInterfa
             $index = 0;
         }
 
-        return new Event($index + 1, $data);
+        return new Event($id, $stream, $index + 1, $data);
     }
 
     /**

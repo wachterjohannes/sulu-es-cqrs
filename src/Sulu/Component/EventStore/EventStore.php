@@ -30,13 +30,15 @@ class EventStore
     }
 
     /**
+     * @param string $id
+     * @param string $stream
      * @param mixed $data
      *
      * @return EventInterface
      */
-    public function create($data)
+    public function create($id, $stream, $data)
     {
-        return $this->store($this->eventRepository->create($data));
+        return $this->store($this->eventRepository->create($id, $stream, $data));
     }
 
     /**

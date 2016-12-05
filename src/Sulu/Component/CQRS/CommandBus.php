@@ -48,7 +48,7 @@ class CommandBus
      */
     public function handle(Command $command)
     {
-        $event = $this->eventStore->create($command);
+        $event = $this->eventStore->create($command->getEntityId(), $command->getEntityClass(), $command);
         foreach ($this->handlers[get_class($command)] as $handler) {
             try {
                 $handler->handle($command, $event);

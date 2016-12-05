@@ -5,10 +5,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\PageRepository")
- * @ORM\Table(name="app_page")
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ExcerptRepository")
+ * @ORM\Table(name="app_excerpt")
  */
-class Page
+class Excerpt
 {
     /**
      * @var string
@@ -27,19 +27,25 @@ class Page
     private $offset;
 
     /**
-     * @var int
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $entityClass;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $entityId;
+
+    /**
+     * @var string
      *
      * @ORM\Column(type="string")
      */
     private $title;
-
-    /**
-     * @var Excerpt
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Excerpt")
-     * @ORM\JoinColumn(name="excerptId", referencedColumnName="id")
-     */
-    private $excerpt;
 
     /**
      * @param string $id
@@ -70,6 +76,26 @@ class Page
     }
 
     /**
+     * Returns entity-class.
+     *
+     * @return string
+     */
+    public function getEntityClass()
+    {
+        return $this->entityClass;
+    }
+
+    /**
+     * Returns entity-id.
+     *
+     * @return string
+     */
+    public function getEntityId()
+    {
+        return $this->entityId;
+    }
+
+    /**
      * Returns title.
      *
      * @return int
@@ -77,15 +103,5 @@ class Page
     public function getTitle()
     {
         return $this->title;
-    }
-
-    /**
-     * Returns excerpt.
-     *
-     * @return Excerpt
-     */
-    public function getExcerpt()
-    {
-        return $this->excerpt;
     }
 }

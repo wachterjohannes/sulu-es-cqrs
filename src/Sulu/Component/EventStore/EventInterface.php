@@ -5,6 +5,20 @@ namespace Sulu\Component\EventStore;
 interface EventInterface
 {
     /**
+     * Returns id.
+     *
+     * @return string
+     */
+    public function getId();
+
+    /**
+     * Returns stream.
+     *
+     * @return string
+     */
+    public function getStream();
+
+    /**
      * Returns index.
      *
      * @return int

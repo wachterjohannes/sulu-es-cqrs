@@ -14,6 +14,12 @@ class PagesNavigationProvider implements ContentNavigationProviderInterface
         $details->setPosition(10);
         $details->setComponent('page/edit/details@app');
 
-        return [$details];
+        $excerpt = new ContentNavigationItem('app.excerpt');
+        $excerpt->setAction('excerpt');
+        $excerpt->setPosition(20);
+        $excerpt->setComponent('page/edit/excerpt@app');
+        $excerpt->setDisplay(['edit']);
+
+        return [$details, $excerpt];
     }
 }
