@@ -32,4 +32,19 @@ class Command extends BaseCommand
     {
         return $this->data;
     }
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getValue($name, $default = null)
+    {
+        if (!array_key_exists($name, $this->data)) {
+            return $default;
+        }
+
+        return $this->data[$name];
+    }
 }

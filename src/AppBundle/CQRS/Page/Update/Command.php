@@ -9,44 +9,42 @@ class Command extends BaseCommand
     /**
      * @var array
      */
-    private $diffMinus;
-
-    /**
-     * @var array
-     */
-    private $diffPlus;
+    private $data;
 
     /**
      * @param string $entityClass
      * @param string $entityId
-     * @param array $diffMinus
-     * @param array $diffPlus
+     * @param array $data
      */
-    public function __construct($entityClass, $entityId, array $diffMinus, array $diffPlus)
+    public function __construct($entityClass, $entityId, array $data)
     {
         parent::__construct($entityClass, $entityId);
 
-        $this->diffMinus = $diffMinus;
-        $this->diffPlus = $diffPlus;
+        $this->data = $data;
     }
 
     /**
-     * Returns diffMinus.
+     * Returns data.
      *
      * @return array
      */
-    public function getDiffMinus()
+    public function getData()
     {
-        return $this->diffMinus;
+        return $this->data;
     }
 
     /**
-     * Returns diffPlus.
+     * @param string $name
+     * @param mixed $default
      *
-     * @return array
+     * @return mixed
      */
-    public function getDiffPlus()
+    public function getValue($name, $default = null)
     {
-        return $this->diffPlus;
+        if (!array_key_exists($name, $this->data)) {
+            return $default;
+        }
+
+        return $this->data[$name];
     }
 }

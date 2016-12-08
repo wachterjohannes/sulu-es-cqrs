@@ -27,7 +27,7 @@ class Page
     private $offset;
 
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Column(type="string")
      */
@@ -40,6 +40,20 @@ class Page
      * @ORM\JoinColumn(name="excerptId", referencedColumnName="id")
      */
     private $excerpt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $template;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $content;
 
     /**
      * @param string $id
@@ -87,5 +101,25 @@ class Page
     public function getExcerpt()
     {
         return $this->excerpt;
+    }
+
+    /**
+     * Returns template.
+     *
+     * @return string
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
+     * Returns content.
+     *
+     * @return array
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 }

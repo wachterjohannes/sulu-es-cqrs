@@ -68,3 +68,15 @@ services:
         tags:
             - {name: 'sulu_admin.content_navigation', alias: 'pages'}
             - {name: 'sulu.context', context: 'admin'}
+
+    app.content.types:
+        class: AppBundle\Content\Types\ContentTypePool
+        calls:
+            - ['addType', ['text_line', '@app.content.types.text_line']]
+            - ['addType', ['text_editor', '@app.content.types.text_editor']]
+
+    app.content.types.text_line:
+        class: AppBundle\Content\Types\ScalarContentType
+
+    app.content.types.text_editor:
+        class: AppBundle\Content\Types\ScalarContentType

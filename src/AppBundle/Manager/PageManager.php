@@ -47,8 +47,7 @@ class PageManager
 
     public function update($id, $data)
     {
-        $page = $this->pageRepository->findById($id);
-        $this->commandBus->handle(new UpdateCommand(Page::class, $id, [$page->getTitle()], $data));
+        $this->commandBus->handle(new UpdateCommand(Page::class, $id, $data));
 
         return $this->pageRepository->findById($id);
     }

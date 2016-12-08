@@ -15,10 +15,6 @@ define(['jquery'], function($) {
 
         header: function() {
             return {
-                title: function() {
-                    return !!this.data.name ? this.data.name : this.translations.headline;
-                }.bind(this),
-
                 tabs: {
                     url: '/admin/content-navigations?alias=pages',
                     options: {

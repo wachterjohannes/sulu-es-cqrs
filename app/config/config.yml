@@ -84,8 +84,11 @@ sulu_core:
         config_dir: "%kernel.root_dir%/Resources/webspaces"
     content:
         structure:
+            type_map:
+                app_page: Sulu\Component\Content\Compat\Structure\StructureBridge
             default_type:
                 snippet: "default"
+                app_page: "default"
             paths:
                 homepage:
                     path: "%kernel.root_dir%/Resources/templates/pages"
@@ -96,6 +99,9 @@ sulu_core:
                 snippet:
                     path: "%kernel.root_dir%/Resources/templates/snippets"
                     type: "snippet"
+                app_page:
+                    path: "%kernel.root_dir%/Resources/templates/app_pages"
+                    type: "app_page"
 
 # SuluDocumentManager Configuration
 sulu_document_manager:

@@ -1,4 +1,6 @@
-define(['underscore', 'jquery', 'text!./form.html'], function(_, $, form) {
+define(['underscore', 'jquery', 'text!/admin/content/template/form.html?type=app_page'], function(_, $, form) {
+
+    var formId = '#content-form';
 
     return {
 
@@ -13,10 +15,12 @@ define(['underscore', 'jquery', 'text!./form.html'], function(_, $, form) {
         },
 
         layout: {
+            extendExisting: true,
+
             content: {
                 width: 'fixed',
-                leftSpace: true,
-                rightSpace: true
+                rightSpace: false,
+                leftSpace: false
             }
         },
 
@@ -30,16 +34,25 @@ define(['underscore', 'jquery', 'text!./form.html'], function(_, $, form) {
         render: function() {
             this.$el.html(this.templates.form({translations: this.translations}));
 
-            this.form = this.sandbox.form.create('#pages-form');
+            this.form = this.sandbox.form.create(formId);
             this.form.initialized.then(function() {
-                this.sandbox.form.setData('#pages-form', this.data || {});
+                var data = this.data.content || {};
+                data.title = this.data.title;
+
+                this.sandbox.form.setData(formId, data || {}).then(function() {
+                    this.sandbox.start(this.$el, {reset: true});
+                }.bind(this));
             }.bind(this));
         },
 
         bindDomEvents: function() {
-            this.$el.find('input, textarea').on('keypress', function() {
-                this.sandbox.emit('sulu.tab.dirty');
-            }.bind(this));
+            this.sandbox.dom.on(this.$el, 'keyup', _.debounce(this.setDirty.bind(this), 10), 'input, textarea');
+            this.sandbox.dom.on(this.$el, 'change', _.debounce(this.setDirty.bind(this), 10), 'input[type="checkbox"], select');
+            this.sandbox.on('sulu.content.changed', this.setDirty.bind(this));
+        },
+
+        setDirty: function() {
+            this.sandbox.emit('sulu.tab.dirty');
         },
 
         bindCustomEvents: function() {
@@ -47,12 +60,15 @@ define(['underscore', 'jquery', 'text!./form.html'], function(_, $, form) {
         },
 
         save: function() {
-            if (!this.sandbox.form.validate('#pages-form')) {
+            if (!this.sandbox.form.validate(formId)) {
                 return;
             }
 
-            var data = this.sandbox.form.getData('#pages-form'),
+            var data = this.sandbox.form.getData(formId),
                 url = this.templates.url({id: this.data.id});
+
+            // TODO dynamic
+            data.template = 'default';
 
             this.sandbox.util.save(url, !this.data.id ? 'POST' : 'PUT', data).then(function(response) {
                 this.sandbox.emit('sulu.tab.saved', response);

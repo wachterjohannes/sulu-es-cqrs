@@ -2,9 +2,10 @@
 
 namespace AppBundle\CQRS\Page\Create;
 
+use AppBundle\Content\Codec;
 use AppBundle\Model\PageRepositoryInterface;
 use AppBundle\Util\ReflectionPropertyTrait;
-use Sulu\Component\CQRS\Command;
+use Sulu\Component\CQRS\Command as BaseCommand;
 use Sulu\Component\CQRS\HandlerInterface;
 use Sulu\Component\EventStore\EventInterface;
 
@@ -30,10 +31,11 @@ class Handler implements HandlerInterface
      *
      * @param Command $command
      */
-    public function handle(Command $command, EventInterface $event)
+    public function handle(BaseCommand $command, EventInterface $event)
     {
         $page = $this->pageRepository->create($command->getEntityId());
-        $this->getProperty('title', $page)->setValue($page, $command->getData()['title']);
+        $this->getProperty('title', $page)->setValue($page, $command->getValue('title'));
+        $this->getProperty('template', $page)->setValue($page, $command->getValue('template'));
         $this->getProperty('offset', $page)->setValue($page, $event->getIndex());
         $this->pageRepository->save($page);
     }
