@@ -7,6 +7,7 @@ prooph_service_bus:
               type: 'prooph_service_bus.command_bus_router'
               routes:
                   App\Model\Page\Command\CreatePage: 'app.handler.create_page'
+                  App\Model\Page\Command\UpdatePage: 'app.handler.update_page'
 
     event_buses:
         page_event_bus:
@@ -16,4 +17,6 @@ prooph_service_bus:
                 type: 'prooph_service_bus.event_bus_router'
                 routes:
                     App\Model\Page\Event\PageWasCreated:
+                        - 'app.projection.page_projector'
+                    App\Model\Page\Event\PageWasUpdated:
                         - 'app.projection.page_projector'

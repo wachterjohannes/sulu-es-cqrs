@@ -3,6 +3,7 @@
 namespace App\Model\Page;
 
 use App\Model\Page\Event\PageWasCreated;
+use App\Model\Page\Event\PageWasUpdated;
 use Assert\Assert;
 use Prooph\EventSourcing\AggregateRoot;
 
@@ -25,9 +26,21 @@ class Page extends AggregateRoot
         return $self;
     }
 
+    public function update($title)
+    {
+        Assert::that($title)->string()->notBlank();
+
+        $this->recordThat(PageWasUpdated::byTitle($this->pageId, $title));
+    }
+
     protected function whenPageWasCreated(PageWasCreated $event)
     {
         $this->pageId = $event->getPageId();
+        $this->title = $event->getTitle();
+    }
+
+    protected function whenPageWasUpdated(PageWasUpdated $event)
+    {
         $this->title = $event->getTitle();
     }
 

@@ -33,3 +33,7 @@ services:
         class: App\Model\Page\Handler\CreatePageHandler
         arguments: ['@page_collection']
 
+    app.handler.update_page:
+        class: App\Model\Page\Handler\UpdatePageHandler
+        arguments: ['@page_collection']
+
