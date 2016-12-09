@@ -23,3 +23,13 @@ services:
 
     app.content.types.text_editor:
         class: AppBundle\Content\Types\ScalarContentType
+
+    app.repository.page:
+        class: AppBundle\Entity\PageRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['AppBundle:Page']
+
+    app.handler.create_page:
+        class: App\Model\Page\Handler\CreatePageHandler
+        arguments: ['@page_collection']
+

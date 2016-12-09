@@ -1,0 +1,19 @@
+prooph_service_bus:
+    command_buses:
+      page_command_bus:
+          plugins:
+              - 'prooph_event_store_bus_bridge.transaction_manager'
+          router:
+              type: 'prooph_service_bus.command_bus_router'
+              routes:
+                  App\Model\Page\Command\CreatePage: 'app.handler.create_page'
+
+    event_buses:
+        page_event_bus:
+            plugins:
+                - 'prooph_service_bus.on_event_invoke_strategy'
+            router:
+                type: 'prooph_service_bus.event_bus_router'
+                routes:
+                    App\Model\Page\Event\PageWasCreated:
+                        - 'app.projection.page_projector'

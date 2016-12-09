@@ -76,6 +76,8 @@ abstract class AbstractKernel extends SuluKernel
             // tools
             new Massive\Bundle\BuildBundle\MassiveBuildBundle(),
 
+            new Prooph\Bundle\EventStore\ProophEventStoreBundle(),
+            new Prooph\Bundle\ServiceBus\ProophServiceBusBundle(),
             new AppBundle\AppBundle(),
         ];
 

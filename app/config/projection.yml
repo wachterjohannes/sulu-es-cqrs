@@ -1,0 +1,4 @@
+services:
+    app.projection.page_projector:
+        class: App\Model\Projection\Page\PageProjector
+        arguments: ['@app.repository.page']

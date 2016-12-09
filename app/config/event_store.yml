@@ -1,0 +1,28 @@
+prooph_event_store:
+    stores:
+        page_store:
+            adapter: 'prooph_event_store.doctrine_adapter.page_store'
+            repositories:
+                page_collection:
+                    repository_class: 'App\Infrastructure\Repository\EventStorePageCollection'
+                    aggregate_type: 'App\Model\Page\Page'
+                    aggregate_translator: 'prooph_event_sourcing.aggregate_translator'
+
+services:
+    prooph_event_store.doctrine_adapter.page_store:
+        class: Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter
+        arguments: ['@database_connection', '@prooph_event_store.message_factory', '@prooph_event_store.message_converter', '@prooph_event_store.payload_serializer', '%prooph_event_store.stream_table_map%']
+
+    prooph_event_sourcing.aggregate_translator:
+        class: Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator
+
+    prooph_event_store_bus_bridge.transaction_manager:
+        class: Prooph\EventStoreBusBridge\TransactionManager
+        tags:
+          - { name: 'prooph_event_store.page_store.plugin' }
+
+    prooph_event_store_bus_bridge.page_event_publisher:
+        class: Prooph\EventStoreBusBridge\EventPublisher
+        arguments: ['@prooph_service_bus.page_event_bus']
+        tags:
+          - { name: 'prooph_event_store.page_store.plugin' }
