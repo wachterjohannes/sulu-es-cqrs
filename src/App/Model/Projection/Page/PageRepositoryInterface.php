@@ -10,5 +10,10 @@ interface PageRepositoryInterface
 
     public function remove(PageInterface $page);
 
-    public function find($id);
+    /**
+     * @param string $id
+     *
+     * @return PageInterface
+     */
+    public function findById($id);
 }

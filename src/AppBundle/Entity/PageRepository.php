@@ -8,6 +8,18 @@ use Doctrine\ORM\EntityRepository;
 
 class PageRepository extends EntityRepository implements PageRepositoryInterface
 {
+    public function findById($id)
+    {
+        $query = $this->createQueryBuilder('page')
+            ->addSelect('excerpt')
+            ->leftJoin('page.excerpt', 'excerpt')
+            ->where('page.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+        return $query->getSingleResult();
+    }
+
     public function create($id, $title)
     {
         return new Page($id, $title);

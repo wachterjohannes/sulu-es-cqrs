@@ -17,4 +17,9 @@ interface PageInterface
      * @return string
      */
     public function getTitle();
+
+    /**
+     * @return ExcerptInterface
+     */
+    public function getExcerpt();
 }

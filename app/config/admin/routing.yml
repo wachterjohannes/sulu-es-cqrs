@@ -100,3 +100,8 @@ app.page:
     type: rest
     resource: "@AppBundle/Controller/PageController.php"
     prefix: /admin/api
+
+app.excerpt:
+    type: rest
+    resource: "@AppBundle/Controller/PageExcerptController.php"
+    prefix: /admin/api

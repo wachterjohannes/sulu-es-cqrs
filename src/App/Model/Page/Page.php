@@ -2,6 +2,7 @@
 
 namespace App\Model\Page;
 
+use App\Model\Page\Event\ExcerptWasUpdated;
 use App\Model\Page\Event\PageWasCreated;
 use App\Model\Page\Event\PageWasRemoved;
 use App\Model\Page\Event\PageWasUpdated;
@@ -15,7 +16,15 @@ class Page extends AggregateRoot
      */
     private $pageId;
 
+    /**
+     * @var string
+     */
     private $title;
+
+    /**
+     * @var Excerpt
+     */
+    private $excerpt;
 
     public static function create($title, PageId $pageId)
     {
@@ -39,6 +48,13 @@ class Page extends AggregateRoot
         $this->recordThat(PageWasRemoved::byId($this->pageId));
     }
 
+    public function updateExcerpt($title)
+    {
+        Assert::that($title)->string()->notBlank();
+
+        $this->recordThat(ExcerptWasUpdated::byTitle($this->pageId, $title));
+    }
+
     protected function whenPageWasCreated(PageWasCreated $event)
     {
         $this->pageId = $event->getPageId();
@@ -52,7 +68,15 @@ class Page extends AggregateRoot
 
     protected function whenPageWasRemoved(PageWasRemoved $event)
     {
+    }
 
+    protected function whenExcerptWasUpdated(ExcerptWasUpdated $event)
+    {
+        if (!$this->excerpt) {
+            $this->excerpt = new Excerpt();
+        }
+
+        $this->excerpt->setTitle($event->getTitle());
     }
 
     protected function aggregateId()

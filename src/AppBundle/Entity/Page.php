@@ -28,6 +28,13 @@ class Page implements PageInterface
     private $title;
 
     /**
+     * @var Excerpt
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Excerpt")
+     */
+    private $excerpt;
+
+    /**
      * @param string $id
      * @param string $title
      */
@@ -51,5 +58,15 @@ class Page implements PageInterface
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Returns excerpt.
+     *
+     * @return Excerpt
+     */
+    public function getExcerpt()
+    {
+        return $this->excerpt;
     }
 }
