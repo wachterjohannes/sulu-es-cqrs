@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use App\Model\Page\Command\CreatePage;
+use App\Model\Page\Command\RemovePage;
 use App\Model\Page\Command\UpdatePage;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -73,6 +74,21 @@ class PageController extends FOSRestController implements ClassResourceInterface
         return $this->handleView(
             $this->view($this->get('app.repository.page')->find($command->getPageId()->toString()))
         );
+    }
+
+    /**
+     * Delete page.
+     *
+     * @param string $id
+     *
+     * @return Response
+     */
+    public function deleteAction($id)
+    {
+        $command = RemovePage::byId($id);
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
+
+        return $this->handleView($this->view());
     }
 
     /**

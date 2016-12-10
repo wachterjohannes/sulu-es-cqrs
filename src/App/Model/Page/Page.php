@@ -3,6 +3,7 @@
 namespace App\Model\Page;
 
 use App\Model\Page\Event\PageWasCreated;
+use App\Model\Page\Event\PageWasRemoved;
 use App\Model\Page\Event\PageWasUpdated;
 use Assert\Assert;
 use Prooph\EventSourcing\AggregateRoot;
@@ -33,6 +34,11 @@ class Page extends AggregateRoot
         $this->recordThat(PageWasUpdated::byTitle($this->pageId, $title));
     }
 
+    public function remove()
+    {
+        $this->recordThat(PageWasRemoved::byId($this->pageId));
+    }
+
     protected function whenPageWasCreated(PageWasCreated $event)
     {
         $this->pageId = $event->getPageId();
@@ -42,6 +48,11 @@ class Page extends AggregateRoot
     protected function whenPageWasUpdated(PageWasUpdated $event)
     {
         $this->title = $event->getTitle();
+    }
+
+    protected function whenPageWasRemoved(PageWasRemoved $event)
+    {
+
     }
 
     protected function aggregateId()

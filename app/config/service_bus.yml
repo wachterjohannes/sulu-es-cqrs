@@ -8,6 +8,7 @@ prooph_service_bus:
               routes:
                   App\Model\Page\Command\CreatePage: 'app.handler.create_page'
                   App\Model\Page\Command\UpdatePage: 'app.handler.update_page'
+                  App\Model\Page\Command\RemovePage: 'app.handler.remove_page'
 
     event_buses:
         page_event_bus:
@@ -19,4 +20,6 @@ prooph_service_bus:
                     App\Model\Page\Event\PageWasCreated:
                         - 'app.projection.page_projector'
                     App\Model\Page\Event\PageWasUpdated:
+                        - 'app.projection.page_projector'
+                    App\Model\Page\Event\PageWasRemoved:
                         - 'app.projection.page_projector'

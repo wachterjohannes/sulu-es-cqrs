@@ -3,6 +3,7 @@
 namespace App\Model\Projection\Page;
 
 use App\Model\Page\Event\PageWasCreated;
+use App\Model\Page\Event\PageWasRemoved;
 use App\Model\Page\Event\PageWasUpdated;
 use AppBundle\Entity\Page;
 
@@ -29,11 +30,16 @@ final class PageProjector
 
     public function onPageWasUpdated(PageWasUpdated $event)
     {
-        /** @var Page $page */
         $page = $this->pageRepository->find($event->getPageId()->toString());
         $this->getProperty('title', $page)->setValue($page, $event->getTitle());
 
         $this->pageRepository->save($page);
+    }
+
+    public function onPageWasRemoved(PageWasRemoved $event)
+    {
+        $page = $this->pageRepository->find($event->getPageId()->toString());
+        $this->pageRepository->remove($page);
     }
 
     /**
