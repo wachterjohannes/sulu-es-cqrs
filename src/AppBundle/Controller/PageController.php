@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Manager\PageManager;
+use App\Model\Page\Command\CreatePage;
+use App\Model\Page\Command\RemovePage;
+use App\Model\Page\Command\UpdatePage;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -30,15 +32,13 @@ class PageController extends FOSRestController implements ClassResourceInterface
     /**
      * Returns a single page identified by id.
      *
-     * @param int $id
+     * @param string $id
      *
      * @return Response
      */
     public function getAction($id)
     {
-        $page = $this->getManager()->find($id);
-
-        return $this->handleView($this->view($page));
+        return $this->handleView($this->view($this->get('app.repository.page')->find($id)));
     }
 
     /**
@@ -50,13 +50,16 @@ class PageController extends FOSRestController implements ClassResourceInterface
      */
     public function postAction(Request $request)
     {
-        $page = $this->getManager()->create($request->request->all());
+        $command = CreatePage::withData($request->get('title'));
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
-        return $this->handleView($this->view($page));
+        return $this->handleView(
+            $this->view($this->get('app.repository.page')->find($command->getPageId()->toString()))
+        );
     }
 
     /**
-     * Update a page with given id and returns it.
+     * Update page and returns it.
      *
      * @param string $id
      * @param Request $request
@@ -65,9 +68,12 @@ class PageController extends FOSRestController implements ClassResourceInterface
      */
     public function putAction($id, Request $request)
     {
-        $page = $this->getManager()->update($id, $request->request->all());
+        $command = UpdatePage::withData($id, $request->get('title'));
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
-        return $this->handleView($this->view($page));
+        return $this->handleView(
+            $this->view($this->get('app.repository.page')->find($command->getPageId()->toString()))
+        );
     }
 
     /**
@@ -79,11 +85,11 @@ class PageController extends FOSRestController implements ClassResourceInterface
      */
     public function deleteAction($id)
     {
-        $this->getManager()->remove($id);
+        $command = RemovePage::byId($id);
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
         return $this->handleView($this->view());
     }
-
 
     /**
      * Shows all pages.
@@ -114,16 +120,6 @@ class PageController extends FOSRestController implements ClassResourceInterface
         );
 
         return $this->handleView($this->view($list));
-    }
-
-    /**
-     * Returns service for page.
-     *
-     * @return PageManager
-     */
-    private function getManager()
-    {
-        return $this->get('app.manager.page');
     }
 
     /**

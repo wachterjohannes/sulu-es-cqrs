@@ -34,7 +34,11 @@
         "doctrine/doctrine-bundle": "^1.0",
         "doctrine/doctrine-cache-bundle": "^1.0",
         "oro/doctrine-extensions": "^1.0",
-        "ramsey/uuid": "^2.9"
+        "prooph/service-bus-symfony-bundle": "v0.2.x",
+        "prooph/event-store-symfony-bundle": "v0.2.x",
+        "prooph/event-sourcing": "^4.0",
+        "prooph/event-store-doctrine-adapter": "^3.2",
+        "prooph/event-store-bus-bridge": "^2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

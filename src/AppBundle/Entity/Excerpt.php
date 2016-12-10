@@ -2,13 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use App\Model\Projection\Page\ExcerptInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ExcerptRepository")
  * @ORM\Table(name="app_excerpt")
  */
-class Excerpt
+class Excerpt implements ExcerptInterface
 {
     /**
      * @var string
@@ -18,13 +19,6 @@ class Excerpt
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="bigint")
-     */
-    private $offset;
 
     /**
      * @var string
@@ -43,17 +37,31 @@ class Excerpt
     /**
      * @var string
      *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $locale;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(type="string")
      */
     private $title;
 
     /**
      * @param string $id
+     * @param string $entityClass
+     * @param string $entityId
+     * @param string $locale
      */
-    public function __construct($id)
+    public function __construct($id, $entityClass, $entityId, $locale = null)
     {
         $this->id = $id;
+        $this->entityClass = $entityClass;
+        $this->entityId = $entityId;
+        $this->locale = $locale;
     }
+
 
     /**
      * Returns id.
@@ -66,17 +74,7 @@ class Excerpt
     }
 
     /**
-     * Returns offset.
-     *
-     * @return int
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * Returns entity-class.
+     * Returns entityClass.
      *
      * @return string
      */
@@ -86,7 +84,7 @@ class Excerpt
     }
 
     /**
-     * Returns entity-id.
+     * Returns entityId.
      *
      * @return string
      */
@@ -96,9 +94,19 @@ class Excerpt
     }
 
     /**
+     * Returns locale.
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
      * Returns title.
      *
-     * @return int
+     * @return string
      */
     public function getTitle()
     {

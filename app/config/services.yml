@@ -1,61 +1,4 @@
 services:
-    event_store:
-        class: Sulu\Component\EventStore\EventStore
-        arguments: ['@app.repository.event']
-
-    command_bus:
-        class: Sulu\Component\CQRS\CommandBus
-        arguments: ['@app.repository.event', '@event_store']
-        calls:
-            - ['register', ['AppBundle\CQRS\Page\Create\Command', '@app.handler.create_page']]
-            - ['register', ['AppBundle\CQRS\Page\Update\Command', '@app.handler.update_page']]
-            - ['register', ['AppBundle\CQRS\Page\Remove\Command', '@app.handler.remove_page']]
-            - ['register', ['AppBundle\CQRS\PageExcerpt\Create\Command', '@app.handler.create_excerpt']]
-            - ['register', ['AppBundle\CQRS\PageExcerpt\Update\Command', '@app.handler.update_excerpt']]
-
-    app.handler.create_page:
-        class: AppBundle\CQRS\Page\Create\Handler
-        arguments: ['@app.repository.page']
-
-    app.handler.update_page:
-        class: AppBundle\CQRS\Page\Update\Handler
-        arguments: ['@app.repository.page']
-
-    app.handler.remove_page:
-        class: AppBundle\CQRS\Page\Remove\Handler
-        arguments: ['@app.repository.page']
-
-    app.handler.create_excerpt:
-        class: AppBundle\CQRS\PageExcerpt\Create\Handler
-        arguments: ['@app.repository.excerpt', '@app.repository.page']
-
-    app.handler.update_excerpt:
-        class: AppBundle\CQRS\PageExcerpt\Update\Handler
-        arguments: ['@app.repository.excerpt', '@app.repository.page']
-
-    app.manager.page:
-        class: AppBundle\Manager\PageManager
-        arguments: ['@app.repository.page', '@command_bus']
-
-    app.manager.excerpt:
-        class: AppBundle\Manager\ExcerptManager
-        arguments: ['@app.repository.excerpt', '@command_bus']
-
-    app.repository.page:
-        class: AppBundle\Entity\PageRepository
-        factory: ['@doctrine.orm.entity_manager', getRepository]
-        arguments: ['AppBundle:Page']
-
-    app.repository.excerpt:
-        class: AppBundle\Entity\ExcerptRepository
-        factory: ['@doctrine.orm.entity_manager', getRepository]
-        arguments: ['AppBundle:Excerpt']
-
-    app.repository.event:
-        class: AppBundle\Entity\EventRepository
-        factory: ['@doctrine.orm.entity_manager', getRepository]
-        arguments: ['AppBundle:Event']
-
     app.admin:
         class: AppBundle\Admin\AppAdmin
         arguments: ['%sulu_admin.name%']
@@ -80,3 +23,30 @@ services:
 
     app.content.types.text_editor:
         class: AppBundle\Content\Types\ScalarContentType
+
+    app.repository.page:
+        class: AppBundle\Entity\PageRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['AppBundle:Page']
+
+    app.repository.excerpt:
+        class: AppBundle\Entity\ExcerptRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments: ['AppBundle:Excerpt']
+
+    app.handler.create_page:
+        class: App\Model\Page\Handler\CreatePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.update_page:
+        class: App\Model\Page\Handler\UpdatePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.remove_page:
+        class: App\Model\Page\Handler\RemovePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.update_excerpt:
+        class: App\Model\Page\Handler\UpdateExcerptHandler
+        arguments: ['@page_collection']
+

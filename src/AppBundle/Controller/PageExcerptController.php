@@ -2,7 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Manager\ExcerptManager;
+use App\Model\Page\Command\UpdateExcerpt;
+use AppBundle\Entity\Page;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -23,11 +24,11 @@ class PageExcerptController extends FOSRestController implements ClassResourceIn
      */
     public function postAction($pageId, Request $request)
     {
-        $excerpt = $this->getManager()->create($pageId, $request->request->all());
+        $command = UpdateExcerpt::withData($pageId, $request->get('title'));
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
-        return $this->handleView($this->view($excerpt));
+        return $this->handleView($this->view($this->get('app.repository.excerpt')->findByEntity(Page::class, $pageId)));
     }
-
     /**
      * Update a excerpt with given id and returns it.
      *
@@ -38,18 +39,9 @@ class PageExcerptController extends FOSRestController implements ClassResourceIn
      */
     public function putAction($pageId, Request $request)
     {
-        $excerpt = $this->getManager()->update($pageId, $request->request->all());
+        $command = UpdateExcerpt::withData($pageId, $request->get('title'));
+        $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
-        return $this->handleView($this->view($excerpt));
-    }
-
-    /**
-     * Returns service for page.
-     *
-     * @return ExcerptManager
-     */
-    private function getManager()
-    {
-        return $this->get('app.manager.excerpt');
+        return $this->handleView($this->view($this->get('app.repository.excerpt')->findByEntity(Page::class, $pageId)));
     }
 }

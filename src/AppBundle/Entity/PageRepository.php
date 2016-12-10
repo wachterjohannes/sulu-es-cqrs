@@ -2,30 +2,38 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Model\PageRepositoryInterface;
+use App\Model\Projection\Page\PageInterface;
+use App\Model\Projection\Page\PageRepositoryInterface;
 use Doctrine\ORM\EntityRepository;
 
 class PageRepository extends EntityRepository implements PageRepositoryInterface
 {
     public function findById($id)
     {
-        return $this->find($id);
+        $query = $this->createQueryBuilder('page')
+            ->addSelect('excerpt')
+            ->leftJoin('page.excerpt', 'excerpt')
+            ->where('page.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+        return $query->getSingleResult();
     }
 
-    public function save(Page $page)
+    public function create($id, $title)
+    {
+        return new Page($id, $title);
+    }
+
+    public function save(PageInterface $page)
     {
         $this->_em->persist($page);
         $this->_em->flush($page);
     }
 
-    public function remove(Page $page)
+    public function remove(PageInterface $page)
     {
         $this->_em->remove($page);
         $this->_em->flush($page);
-    }
-
-    public function create($uuid)
-    {
-        return new Page($uuid);
     }
 }
