@@ -14,10 +14,12 @@ Following features will be tested here:
 
 - [ ] Content management
 
-  - [ ] Translations
+  - [x] Translations
   - [ ] Ghost
   - [ ] Shadow
   - [ ] Content Types
+    * Scalar
+    * Reference
   - [ ] Excerpts
   - [ ] Tree
   - [ ] Versions

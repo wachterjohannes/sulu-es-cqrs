@@ -41,6 +41,13 @@ class PageTranslation
     private $title;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $data;
+
+    /**
      * @var Excerpt
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Excerpt")
@@ -113,6 +120,29 @@ class PageTranslation
         return $this;
     }
 
+    /**
+     * Returns data.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set data.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
 
     /**
      * Returns excerpt.

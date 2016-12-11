@@ -62,7 +62,9 @@ class Page extends AggregateRoot
             $this->translations[$event->getLocale()] = new PageTranslation($event->getLocale(), $event->getTitle());
         }
 
-        $this->translations[$event->getLocale()]->setTitle($event->getTitle());
+        $translation = $this->translations[$event->getLocale()];
+        $translation->setTitle($event->getTitle());
+        $translation->setData($event->getData());
     }
 
     protected function whenPageWasRemoved(PageWasRemoved $event)

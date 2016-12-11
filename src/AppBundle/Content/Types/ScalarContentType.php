@@ -13,4 +13,9 @@ class ScalarContentType implements ContentTypeInterface
     {
         return $value;
     }
+
+    public function validate($value)
+    {
+        return true;
+    }
 }

@@ -2,3 +2,7 @@ services:
     app.projection.page_projector:
         class: App\Model\Projection\Page\PageProjector
         arguments: ['@doctrine.orm.entity_manager']
+
+    app.projection.excerpt_projector:
+        class: App\Model\Projection\Page\ExcerptProjector
+        arguments: ['@doctrine.orm.entity_manager']

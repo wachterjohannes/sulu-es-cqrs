@@ -4,6 +4,7 @@ namespace App\Model\Page\Handler;
 
 use App\Model\Page\Command\UpdatePage;
 use App\Model\Page\PageCollection;
+use AppBundle\Content\ContentCodec;
 
 final class UpdatePageHandler
 {
@@ -13,11 +14,18 @@ final class UpdatePageHandler
     private $pageCollection;
 
     /**
-     * @param PageCollection $pageCollection
+     * @var ContentCodec
      */
-    public function __construct(PageCollection $pageCollection)
+    private $codec;
+
+    /**
+     * @param PageCollection $pageCollection
+     * @param ContentCodec $codec
+     */
+    public function __construct(PageCollection $pageCollection, ContentCodec $codec)
     {
         $this->pageCollection = $pageCollection;
+        $this->codec = $codec;
     }
 
     /**
@@ -25,7 +33,9 @@ final class UpdatePageHandler
      */
     public function __invoke(UpdatePage $command)
     {
+        $data = $this->codec->encode($command->getTemplate(), $command->getData());
+
         $page = $this->pageCollection->get($command->getPageId());
-        $page->update($command->getLocale(), $command->getTitle(), $command->getData());
+        $page->update($command->getLocale(), $command->getTitle(), $data);
     }
 }

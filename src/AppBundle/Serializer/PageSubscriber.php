@@ -38,5 +38,9 @@ class PageSubscriber implements EventSubscriberInterface
 
         $visitor->addData('title', $translation->getTitle());
         $visitor->addData('excerpt', $context->accept($translation->getExcerpt()));
+
+        foreach ($translation->getData() as $key => $value) {
+            $visitor->addData($key, $value);
+        }
     }
 }

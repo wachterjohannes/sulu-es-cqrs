@@ -1,11 +1,11 @@
 services:
     app.handler.create_page:
         class: App\Model\Page\Handler\CreatePageHandler
-        arguments: ['@page_collection']
+        arguments: ['@page_collection', '@app.content.codec']
 
     app.handler.update_page:
         class: App\Model\Page\Handler\UpdatePageHandler
-        arguments: ['@page_collection']
+        arguments: ['@page_collection', '@app.content.codec']
 
     app.handler.remove_page:
         class: App\Model\Page\Handler\RemovePageHandler

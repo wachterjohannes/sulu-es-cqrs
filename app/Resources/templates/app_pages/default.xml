@@ -30,5 +30,8 @@
                 </property>
             </properties>
         </section>
+
+        <property name="textLine" type="text_line"/>
+        <property name="textEditor" type="text_editor"/>
     </properties>
 </template>

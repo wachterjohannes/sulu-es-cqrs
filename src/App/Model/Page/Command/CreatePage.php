@@ -11,21 +11,18 @@ class CreatePage extends Command
 {
     use PayloadTrait;
 
-    /**
-     * @param string $locale
-     * @param array $data
-     *
-     * @return self
-     */
     public static function withData($locale, array $data)
     {
         $title = $data['title'];
+        $template = $data['template'];
         unset($data['title']);
+        unset($data['template']);
 
         return new self(
             [
                 'page_id' => Uuid::uuid4()->toString(),
                 'title' => $title,
+                'template' => $template,
                 'locale' => $locale,
                 'data' => $data,
             ]
@@ -40,6 +37,11 @@ class CreatePage extends Command
     public function getTitle()
     {
         return $this->payload['title'];
+    }
+
+    public function getTemplate()
+    {
+        return $this->payload['template'];
     }
 
     public function getLocale()

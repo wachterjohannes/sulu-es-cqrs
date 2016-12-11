@@ -36,8 +36,7 @@ define(['underscore', 'jquery', 'text!/admin/content/template/form.html?type=app
 
             this.form = this.sandbox.form.create(formId);
             this.form.initialized.then(function() {
-                var data = this.data.content || {};
-                data.title = this.data.title;
+                var data = this.data || {};
 
                 this.sandbox.form.setData(formId, data || {}).then(function() {
                     this.sandbox.start(this.$el, {reset: true});

@@ -25,4 +25,4 @@ prooph_service_bus:
                     App\Model\Page\Event\PageWasRemoved:
                         - 'app.projection.page_projector'
                     App\Model\Page\Event\ExcerptWasUpdated:
-                        - 'app.projection.page_projector'
+                        - 'app.projection.excerpt_projector'

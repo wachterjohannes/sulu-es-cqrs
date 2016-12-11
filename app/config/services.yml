@@ -12,6 +12,10 @@ services:
             - {name: 'sulu_admin.content_navigation', alias: 'pages'}
             - {name: 'sulu.context', context: 'admin'}
 
+    app.content.codec:
+        class: AppBundle\Content\ContentCodec
+        arguments: ['@sulu_content.structure.factory', '@app.content.types']
+
     app.content.types:
         class: AppBundle\Content\Types\ContentTypePool
         calls:

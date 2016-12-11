@@ -10,22 +10,18 @@ class UpdatePage extends Command
 {
     use PayloadTrait;
 
-    /**
-     * @param string $id
-     * @param string $locale
-     * @param array $data
-     *
-     * @return self
-     */
     public static function withData($id, $locale, array $data)
     {
         $title = $data['title'];
+        $template = $data['template'];
         unset($data['title']);
+        unset($data['template']);
 
         return new self(
             [
                 'page_id' => $id,
                 'title' => $title,
+                'template' => $template,
                 'locale' => $locale,
                 'data' => $data,
             ]
@@ -40,6 +36,11 @@ class UpdatePage extends Command
     public function getTitle()
     {
         return $this->payload['title'];
+    }
+
+    public function getTemplate()
+    {
+        return $this->payload['template'];
     }
 
     public function getLocale()

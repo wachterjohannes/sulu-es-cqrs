@@ -15,6 +15,11 @@ class PageTranslation
     private $title;
 
     /**
+     * @var array
+     */
+    private $data;
+
+    /**
      * @var Excerpt
      */
     private $excerpt;
@@ -59,6 +64,30 @@ class PageTranslation
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Returns data.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set data.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
 
         return $this;
     }
