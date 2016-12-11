@@ -1,14 +1,14 @@
 define(['jquery', 'underscore', 'services/husky/util'], function($, _, Util) {
 
-    var template = _.template('/admin/api/pages/<%= id %>/excerpt');
+    var template = _.template('/admin/api/pages/<%= id %>/excerpt?locale=<%= locale %>');
 
     return {
-        load: function(id) {
-            return Util.load(template({id: id}));
+        load: function(id, locale) {
+            return Util.load(template({id: id, locale: locale}));
         },
 
-        save: function(pageId, data) {
-            return Util.save(template({id: pageId}), !data.id ? 'POST' : 'PUT', data);
+        save: function(pageId, data, locale) {
+            return Util.save(template({id: pageId, locale: locale}), !data.id ? 'POST' : 'PUT', data);
         }
     };
 });

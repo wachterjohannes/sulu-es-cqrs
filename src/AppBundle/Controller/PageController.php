@@ -5,18 +5,20 @@ namespace AppBundle\Controller;
 use App\Model\Page\Command\CreatePage;
 use App\Model\Page\Command\RemovePage;
 use App\Model\Page\Command\UpdatePage;
+use AppBundle\Entity\Page;
+use AppBundle\Entity\PageTranslation;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use JMS\Serializer\SerializationContext;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
+use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineJoinDescriptor;
 use Sulu\Component\Rest\ListBuilder\ListRepresentation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PageController extends FOSRestController implements ClassResourceInterface
 {
-    const ENTITY_NAME = 'AppBundle:Page';
-
     /**
      * Returns all fields that can be used by list.
      *
@@ -33,12 +35,19 @@ class PageController extends FOSRestController implements ClassResourceInterface
      * Returns a single page identified by id.
      *
      * @param string $id
+     * @param Request $request
      *
      * @return Response
      */
-    public function getAction($id)
+    public function getAction($id, Request $request)
     {
-        return $this->handleView($this->view($this->get('app.repository.page')->find($id)));
+        $page = $this->get('app.repository.page')->find($id);
+
+        return $this->handleView(
+            $this->view($page)->setSerializationContext(
+                SerializationContext::create()->setAttribute('locale', $request->get('locale'))
+            )
+        );
     }
 
     /**
@@ -50,11 +59,14 @@ class PageController extends FOSRestController implements ClassResourceInterface
      */
     public function postAction(Request $request)
     {
-        $command = CreatePage::withData($request->get('title'));
+        $command = CreatePage::withData($request->get('locale'), $request->request->all());
         $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
+        $page = $this->get('app.repository.page')->find($command->getPageId()->toString());
 
         return $this->handleView(
-            $this->view($this->get('app.repository.page')->find($command->getPageId()->toString()))
+            $this->view($page)->setSerializationContext(
+                SerializationContext::create()->setAttribute('locale', $request->get('locale'))
+            )
         );
     }
 
@@ -68,11 +80,14 @@ class PageController extends FOSRestController implements ClassResourceInterface
      */
     public function putAction($id, Request $request)
     {
-        $command = UpdatePage::withData($id, $request->get('title'));
+        $command = UpdatePage::withData($id, $request->get('locale'), $request->request->all());
         $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
+        $page = $this->get('app.repository.page')->find($command->getPageId()->toString());
 
         return $this->handleView(
-            $this->view($this->get('app.repository.page')->find($command->getPageId()->toString()))
+            $this->view($page)->setSerializationContext(
+                SerializationContext::create()->setAttribute('locale', $request->get('locale'))
+            )
         );
     }
 
@@ -105,8 +120,8 @@ class PageController extends FOSRestController implements ClassResourceInterface
         $restHelper = $this->get('sulu_core.doctrine_rest_helper');
         $factory = $this->get('sulu_core.doctrine_list_builder_factory');
 
-        $listBuilder = $factory->create(self::ENTITY_NAME);
-        $restHelper->initializeListBuilder($listBuilder, $this->getFieldDescriptors());
+        $listBuilder = $factory->create(Page::class);
+        $restHelper->initializeListBuilder($listBuilder, $this->getFieldDescriptors($request->get('locale')));
         $results = $listBuilder->execute();
 
         $list = new ListRepresentation(
@@ -125,16 +140,24 @@ class PageController extends FOSRestController implements ClassResourceInterface
     /**
      * Returns array of existing field-descriptors.
      *
+     * @param string $locale
+     *
      * @return array
      */
-    private function getFieldDescriptors()
+    private function getFieldDescriptors($locale = null)
     {
         return [
             'id' => new DoctrineFieldDescriptor(
-                'id', 'id', self::ENTITY_NAME, 'public.id', [], true
+                'id', 'id', Page::class, 'public.id', [], true
             ),
             'title' => new DoctrineFieldDescriptor(
-                'title', 'title', self::ENTITY_NAME, 'public.title'
+                'title', 'title', PageTranslation::class, 'public.title', [
+                    PageTranslation::class => new DoctrineJoinDescriptor(
+                        PageTranslation::class,
+                        Page::class . '.translations',
+                        $locale ? PageTranslation::class . '.locale = \'' . $locale . '\'' : ''
+                    ),
+                ]
             ),
         ];
     }

@@ -6,63 +6,77 @@ use App\Model\Page\Event\ExcerptWasUpdated;
 use App\Model\Page\Event\PageWasCreated;
 use App\Model\Page\Event\PageWasRemoved;
 use App\Model\Page\Event\PageWasUpdated;
+use AppBundle\Entity\Excerpt;
+use AppBundle\Entity\Page;
+use AppBundle\Entity\PageTranslation;
+use Doctrine\ORM\EntityManager;
 
 final class PageProjector
 {
     /**
-     * @var PageRepositoryInterface
+     * @var EntityManager
      */
-    private $pageRepository;
+    private $entityManager;
 
     /**
-     * @var ExcerptRepositoryInterface
+     * @param EntityManager $entityManager
      */
-    private $excerptRepository;
-
-    /**
-     * @param PageRepositoryInterface $pageRepository
-     * @param ExcerptRepositoryInterface $excerptRepository
-     */
-    public function __construct(PageRepositoryInterface $pageRepository, ExcerptRepositoryInterface $excerptRepository)
+    public function __construct(EntityManager $entityManager)
     {
-        $this->pageRepository = $pageRepository;
-        $this->excerptRepository = $excerptRepository;
+        $this->entityManager = $entityManager;
     }
 
     public function onPageWasCreated(PageWasCreated $event)
     {
-        $page = $this->pageRepository->create($event->getPageId()->toString(), $event->getTitle());
-        $this->pageRepository->save($page);
+        $translation = new PageTranslation(
+            $event->getLocale(), $event->getTitle(), new Page($event->getPageId()->toString())
+        );
+        $translation->getPage()->addTranslation($translation);
+
+        $this->entityManager->persist($translation);
+        $this->entityManager->flush($translation);
     }
 
     public function onPageWasUpdated(PageWasUpdated $event)
     {
-        $page = $this->pageRepository->findById($event->getPageId()->toString());
-        $this->getProperty('title', $page)->setValue($page, $event->getTitle());
+        $page = $this->entityManager->find(Page::class, $event->getPageId()->toString());
+        if (!$page->hasTranslation($event->getLocale())) {
+            $page->addTranslation(new PageTranslation($event->getLocale(), $event->getTitle(), $page));
+        }
 
-        $this->pageRepository->save($page);
+        $translation = $page->getTranslation($event->getLocale());
+        $translation->setTitle($event->getTitle());
+
+        $this->entityManager->persist($page);
+        $this->entityManager->flush($translation);
+        $this->entityManager->flush($page);
     }
 
     public function onPageWasRemoved(PageWasRemoved $event)
     {
-        $page = $this->pageRepository->findById($event->getPageId()->toString());
-        $this->pageRepository->remove($page);
+        $page = $this->entityManager->find(Page::class, $event->getPageId()->toString());
+
+        $this->entityManager->remove($page);
+        $this->entityManager->flush($page);
     }
 
     public function onExcerptWasUpdated(ExcerptWasUpdated $event)
     {
-        $page = $this->pageRepository->findById($event->getPageId()->toString());
-        $excerpt = $this->excerptRepository->findByEntity(get_class($page), $page->getId());
+        $page = $this->entityManager->find(Page::class, $event->getPageId()->toString());
+        $translation = $page->getTranslation($event->getLocale());
 
-        if (!$excerpt) {
-            $excerpt = $this->excerptRepository->create(get_class($page), $page->getId());
-            $this->getProperty('excerpt', $page)->setValue($page, $excerpt);
+        if (!$translation->getExcerpt()) {
+            $excerpt = new Excerpt($event->getPageId()->toString(), Page::class, $event->getPageId()->toString());
+
+            $translation->setExcerpt($excerpt);
+            $this->entityManager->persist($excerpt);
         }
 
-        $this->getProperty('title', $excerpt)->setValue($excerpt, $event->getTitle());
+        $excerpt = $translation->getExcerpt();
+        $excerpt->setTitle($event->getTitle());
 
-        $this->excerptRepository->save($excerpt);
-        $this->pageRepository->save($page);
+        $this->entityManager->flush($excerpt);
+        $this->entityManager->flush($translation);
     }
 
     /**

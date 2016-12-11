@@ -7,7 +7,7 @@ define(['underscore', 'jquery', 'text!/admin/content/template/form.html?type=app
         defaults: {
             templates: {
                 form: form,
-                url: '/admin/api/pages<% if (!!id) { %>/<%= id %><% } %>'
+                url: '/admin/api/pages<% if (!!id) { %>/<%= id %><% } %>?locale=<%= locale %>'
             },
             translations: {
                 title: 'public.title'
@@ -65,7 +65,7 @@ define(['underscore', 'jquery', 'text!/admin/content/template/form.html?type=app
             }
 
             var data = this.sandbox.form.getData(formId),
-                url = this.templates.url({id: this.data.id});
+                url = this.templates.url({id: this.data.id, locale: this.options.locale});
 
             // TODO dynamic
             data.template = 'default';

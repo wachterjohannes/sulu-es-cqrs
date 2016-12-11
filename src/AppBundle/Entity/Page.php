@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use App\Model\Projection\Page\PageInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\PageRepository")
@@ -21,27 +23,19 @@ class Page implements PageInterface
     private $id;
 
     /**
-     * @var string
+     * @var Collection|PageTranslation[]
      *
-     * @ORM\Column(type="string")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\PageTranslation", mappedBy="page", indexBy="locale", cascade={"all"})
+     * @Serializer\Exclude
      */
-    private $title;
-
-    /**
-     * @var Excerpt
-     *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Excerpt")
-     */
-    private $excerpt;
+    private $translations;
 
     /**
      * @param string $id
-     * @param string $title
      */
-    public function __construct($id, $title)
+    public function __construct($id)
     {
         $this->id = $id;
-        $this->title = $title;
     }
 
     /**
@@ -52,21 +46,22 @@ class Page implements PageInterface
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTitle()
+    public function getTranslation($locale)
     {
-        return $this->title;
+        if (!isset($this->translations[$locale])) {
+            throw new \InvalidArgumentException(sprintf('Translation for "%s" does not exists.', $locale));
+        }
+
+        return $this->translations[$locale];
     }
 
-    /**
-     * Returns excerpt.
-     *
-     * @return Excerpt
-     */
-    public function getExcerpt()
+    public function addTranslation(PageTranslation $translation)
     {
-        return $this->excerpt;
+        $this->translations[$translation->getLocale()] = $translation;
+    }
+
+    public function hasTranslation($locale)
+    {
+        return isset($this->translations[$locale]);
     }
 }

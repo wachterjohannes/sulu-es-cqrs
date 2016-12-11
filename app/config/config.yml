@@ -3,6 +3,7 @@ imports:
     - { resource: event_store.yml }
     - { resource: service_bus.yml }
     - { resource: projection.yml }
+    - { resource: handler.yml }
     - { resource: services.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed

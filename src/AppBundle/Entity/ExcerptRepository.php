@@ -13,7 +13,7 @@ class ExcerptRepository extends EntityRepository implements ExcerptRepositoryInt
     public function findByEntity($entityClass, $entityId, $locale = null)
     {
         try {
-            return $this->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId, 'locale' => $locale]);
+            return $this->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
         } catch (NoResultException $exception) {
             return null;
         }
@@ -21,7 +21,7 @@ class ExcerptRepository extends EntityRepository implements ExcerptRepositoryInt
 
     public function create($entityClass, $entityId, $locale = null)
     {
-        return new Excerpt(Uuid::uuid4()->toString(), $entityClass, $entityId, $locale);
+        return new Excerpt(Uuid::uuid4()->toString(), $entityClass, $entityId);
     }
 
     public function save(ExcerptInterface $excerpt)

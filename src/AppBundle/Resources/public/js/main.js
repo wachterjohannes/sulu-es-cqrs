@@ -19,21 +19,28 @@ define(function() {
             app.sandbox.mvc.routes.push({
                 route: 'pages',
                 callback: function() {
-                    return '<div data-aura-component="page/list@app"/>';
+                    app.sandbox.emit('sulu.router.navigate', 'pages/de', true, true);
                 }
             });
 
             app.sandbox.mvc.routes.push({
-                route: 'pages/add',
-                callback: function() {
-                    return '<div data-aura-component="page/edit@app"/>';
+                route: 'pages/:locale',
+                callback: function(locale) {
+                    return '<div data-aura-component="page/list@app" data-aura-locale="' + locale + '"/>';
                 }
             });
 
             app.sandbox.mvc.routes.push({
-                route: 'pages/edit::id/:content',
-                callback: function(id) {
-                    return '<div data-aura-component="page/edit@app" data-aura-id="' + id + '"/>';
+                route: 'pages/:locale/add',
+                callback: function(locale) {
+                    return '<div data-aura-component="page/edit@app" data-aura-locale="' + locale + '"/>';
+                }
+            });
+
+            app.sandbox.mvc.routes.push({
+                route: 'pages/:locale/edit::id/:content',
+                callback: function(locale, id) {
+                    return '<div data-aura-component="page/edit@app" data-aura-locale="' + locale + '" data-aura-id="' + id + '"/>';
                 }
             });
         }

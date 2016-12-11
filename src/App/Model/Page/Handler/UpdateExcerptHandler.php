@@ -28,6 +28,6 @@ final class UpdateExcerptHandler
     public function __invoke(UpdateExcerpt $command)
     {
         $page = $this->pageCollection->get($command->getPageId());
-        $page->updateExcerpt($command->getTitle());
+        $page->updateExcerpt($command->getLocale(), $command->getTitle());
     }
 }

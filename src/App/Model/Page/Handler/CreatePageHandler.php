@@ -26,6 +26,8 @@ final class CreatePageHandler
      */
     public function __invoke(CreatePage $command)
     {
-        $this->pageCollection->add(Page::create($command->getTitle(), $command->getPageId()));
+        $this->pageCollection->add(
+            Page::create($command->getPageId(), $command->getLocale(), $command->getTitle(), $command->getData())
+        );
     }
 }

@@ -10,16 +10,22 @@ define(['text!./list.html'], function(list) {
 
         defaults: defaults,
 
-        header: {
-            title: 'app.pages',
-            underline: false,
+        header: function() {
+            return {
+                title: 'app.pages',
+                underline: false,
 
-            toolbar: {
-                buttons: {
-                    add: {},
-                    deleteSelected: {}
+                toolbar: {
+                    buttons: {
+                        add: {},
+                        deleteSelected: {}
+                    },
+
+                    languageChanger: {
+                        preSelected: this.options.locale
+                    }
                 }
-            }
+            };
         },
 
         layout: {
@@ -57,7 +63,7 @@ define(['text!./list.html'], function(list) {
                 },
                 {
                     el: this.sandbox.dom.find('#page-list'),
-                    url: '/admin/api/pages',
+                    url: '/admin/api/pages?locale=' + this.options.locale,
                     searchInstanceName: 'pages',
                     searchFields: ['title', 'content'],
                     resultKey: 'pages',
@@ -72,12 +78,16 @@ define(['text!./list.html'], function(list) {
             );
         },
 
+        toList: function(locale) {
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + locale);
+        },
+
         toEdit: function(id) {
-            this.sandbox.emit('sulu.router.navigate', 'pages/edit:' + id + '/details');
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + this.options.locale + '/edit:' + id + '/details');
         },
 
         toAdd: function() {
-            this.sandbox.emit('sulu.router.navigate', 'pages/add');
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + this.options.locale + '/add');
         },
 
         deleteItems: function(ids) {
@@ -102,6 +112,10 @@ define(['text!./list.html'], function(list) {
 
             this.sandbox.on('sulu.toolbar.delete', function() {
                 this.sandbox.emit('husky.datagrid.pages.items.get-selected', this.deleteItems.bind(this));
+            }.bind(this));
+
+            this.sandbox.on('sulu.header.language-changed', function(item) {
+                this.toList(item.id);
             }.bind(this));
         }
     };

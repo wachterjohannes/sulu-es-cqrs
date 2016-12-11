@@ -34,19 +34,7 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments: ['AppBundle:Excerpt']
 
-    app.handler.create_page:
-        class: App\Model\Page\Handler\CreatePageHandler
-        arguments: ['@page_collection']
-
-    app.handler.update_page:
-        class: App\Model\Page\Handler\UpdatePageHandler
-        arguments: ['@page_collection']
-
-    app.handler.remove_page:
-        class: App\Model\Page\Handler\RemovePageHandler
-        arguments: ['@page_collection']
-
-    app.handler.update_excerpt:
-        class: App\Model\Page\Handler\UpdateExcerptHandler
-        arguments: ['@page_collection']
-
+    app.serializer.page:
+        class: AppBundle\Serializer\PageSubscriber
+        tags:
+            - { name: 'jms_serializer.event_subscriber' }

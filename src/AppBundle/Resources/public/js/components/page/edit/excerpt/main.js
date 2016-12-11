@@ -19,7 +19,7 @@ define(['app/services/excerpt-manager'], function(manager) {
             }
             data.entityId = content.id;
 
-            manager.save(content.id, data).then(function(data) {
+            manager.save(content.id, data, this.options.locale).then(function(data) {
                 content.excerpt = data;
                 this.sandbox.emit('sulu.tab.saved', content);
             }.bind(this));

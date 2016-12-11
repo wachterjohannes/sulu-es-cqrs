@@ -24,7 +24,7 @@ class PageExcerptController extends FOSRestController implements ClassResourceIn
      */
     public function postAction($pageId, Request $request)
     {
-        $command = UpdateExcerpt::withData($pageId, $request->get('title'));
+        $command = UpdateExcerpt::withData($pageId, $request->get('locale'), $request->request->all());
         $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
         return $this->handleView($this->view($this->get('app.repository.excerpt')->findByEntity(Page::class, $pageId)));
@@ -39,7 +39,7 @@ class PageExcerptController extends FOSRestController implements ClassResourceIn
      */
     public function putAction($pageId, Request $request)
     {
-        $command = UpdateExcerpt::withData($pageId, $request->get('title'));
+        $command = UpdateExcerpt::withData($pageId, $request->get('locale'), $request->request->all());
         $this->get('prooph_service_bus.page_command_bus')->dispatch($command);
 
         return $this->handleView($this->view($this->get('app.repository.excerpt')->findByEntity(Page::class, $pageId)));

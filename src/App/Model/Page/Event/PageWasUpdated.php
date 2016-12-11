@@ -7,44 +7,39 @@ use Prooph\EventSourcing\AggregateChanged;
 
 class PageWasUpdated extends AggregateChanged
 {
-    public static function byTitle(PageId $pageId, $title)
+    public static function withData(PageId $pageId, $locale, $title, $data)
     {
         $event = self::occur(
             $pageId->toString(),
             [
                 'page_id' => $pageId->toString(),
                 'title' => $title,
+                'locale' => $locale,
+                'data' => $data,
             ]
         );
-
-        $event->pageId = $pageId;
-        $event->title = $title;
 
         return $event;
     }
 
     /**
-     * @var PageId
-     */
-    private $pageId;
-
-    /**
-     * @var string
-     */
-    private $title;
-
-    /**
-     * Returns pageId.
+     * Returns page-id.
      *
      * @return PageId
      */
     public function getPageId()
     {
-        if (!$this->pageId) {
-            $this->pageId = PageId::fromString($this->payload['page_id']);
-        }
+        return PageId::fromString($this->payload['page_id']);
+    }
 
-        return $this->pageId;
+    /**
+     * Returns locale.
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->payload['locale'];
     }
 
     /**
@@ -54,10 +49,16 @@ class PageWasUpdated extends AggregateChanged
      */
     public function getTitle()
     {
-        if (!$this->title) {
-            $this->title = $this->payload['title'];
-        }
+        return $this->payload['title'];
+    }
 
-        return $this->title;
+    /**
+     * Returns data.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->payload['data'];
     }
 }

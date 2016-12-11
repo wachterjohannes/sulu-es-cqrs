@@ -1,1 +1,1 @@
-define(["jquery","underscore","services/husky/util"],function(a,b,c){var d=b.template("/admin/api/pages/<%= id %>/excerpt");return{load:function(a){return c.load(d({id:a}))},save:function(a,b){return c.save(d({id:a}),b.id?"PUT":"POST",b)}}});
+define(["jquery","underscore","services/husky/util"],function(a,b,c){var d=b.template("/admin/api/pages/<%= id %>/excerpt?locale=<%= locale %>");return{load:function(a,b){return c.load(d({id:a,locale:b}))},save:function(a,b,e){return c.save(d({id:a,locale:e}),b.id?"PUT":"POST",b)}}});

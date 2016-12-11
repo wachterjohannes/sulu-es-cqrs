@@ -12,16 +12,18 @@ class UpdateExcerpt extends Command
 
     /**
      * @param string $pageId
-     * @param string $title
+     * @param string $locale
+     * @param array $data
      *
      * @return UpdateExcerpt
      */
-    public static function withData($pageId, $title)
+    public static function withData($pageId, $locale, array $data)
     {
         return new self(
             [
                 'page_id' => $pageId,
-                'title' => $title,
+                'locale' => $locale,
+                'title' => $data['title'],
             ]
         );
     }
@@ -29,6 +31,11 @@ class UpdateExcerpt extends Command
     public function getPageId()
     {
         return PageId::fromString($this->payload['page_id']);
+    }
+
+    public function getLocale()
+    {
+        return $this->payload['locale'];
     }
 
     public function getTitle()

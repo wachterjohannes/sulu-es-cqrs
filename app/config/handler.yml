@@ -1,0 +1,16 @@
+services:
+    app.handler.create_page:
+        class: App\Model\Page\Handler\CreatePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.update_page:
+        class: App\Model\Page\Handler\UpdatePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.remove_page:
+        class: App\Model\Page\Handler\RemovePageHandler
+        arguments: ['@page_collection']
+
+    app.handler.update_excerpt:
+        class: App\Model\Page\Handler\UpdateExcerptHandler
+        arguments: ['@page_collection']

@@ -6,7 +6,7 @@ define(['jquery'], function($) {
 
         defaults: {
             templates: {
-                url: '/admin/api/pages<% if (!!id) { %>/<%= id %><% } %>'
+                url: '/admin/api/pages<% if (!!id) { %>/<%= id %><% } %>?locale=<%= locale %>'
             },
             translations: {
                 headline: 'app.page'
@@ -18,6 +18,7 @@ define(['jquery'], function($) {
                 tabs: {
                     url: '/admin/content-navigations?alias=pages',
                     options: {
+                        locale: this.options.locale,
                         data: function() {
                             return this.sandbox.util.extend(false, {}, this.data);
                         }.bind(this)
@@ -32,6 +33,10 @@ define(['jquery'], function($) {
                         save: {
                             parent: 'saveWithOptions'
                         }
+                    },
+
+                    languageChanger: {
+                        preSelected: this.options.locale
                     }
                 }
             };
@@ -45,10 +50,12 @@ define(['jquery'], function($) {
 
                 return promise;
             }
-            this.sandbox.util.load(_.template(this.defaults.templates.url, {id: this.options.id}))
-                .done(function(data) {
-                    promise.resolve(data);
-                });
+            this.sandbox.util.load(_.template(this.defaults.templates.url, {
+                id: this.options.id,
+                locale: this.options.locale
+            })).done(function(data) {
+                promise.resolve(data);
+            });
 
             return promise;
         },
@@ -62,10 +69,14 @@ define(['jquery'], function($) {
             this.sandbox.on('sulu.tab.dirty', this.enableSave.bind(this));
             this.sandbox.on('sulu.toolbar.save', this.save.bind(this));
             this.sandbox.on('sulu.tab.data-changed', this.setData.bind(this));
-        },
 
-        toList: function() {
-            this.sandbox.emit('sulu.router.navigate', 'pages');
+            this.sandbox.on('sulu.header.language-changed', function(item) {
+                if (!!this.options.id) {
+                    this.toEdit(this.options.id, item.id);
+                } else {
+                    this.toAdd(item.id);
+                }
+            }.bind(this));
         },
 
         save: function(action) {
@@ -102,15 +113,28 @@ define(['jquery'], function($) {
             this.sandbox.emit('sulu.header.toolbar.item.loading', 'save');
         },
 
+        toList: function() {
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + this.options.locale);
+        },
+
+        toEdit: function(id, locale) {
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + (locale || this.options.locale) + '/edit:' + id + '/details');
+        },
+
+        toAdd: function(locale) {
+            this.sandbox.emit('sulu.router.navigate', 'pages/' + (locale || this.options.locale) + '/add');
+        },
+
         afterSave: function(action, data) {
             this.sandbox.emit('sulu.header.toolbar.item.disable', 'save', true);
             this.sandbox.emit('sulu.header.saved', data);
 
             if (action === 'back') {
-                this.sandbox.emit('sulu.router.navigate', 'pages');
+                this.toList();
             } else if (action === 'new') {
-                this.sandbox.emit('sulu.router.navigate', 'pages/add');
+                this.toAdd();
             } else if (!this.options.id) {
+                this.toEdit(data.id);
                 this.sandbox.emit('sulu.router.navigate', 'pages/edit:' + data.id + '/details');
             }
         }

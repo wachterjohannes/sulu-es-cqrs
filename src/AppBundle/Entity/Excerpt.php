@@ -37,13 +37,6 @@ class Excerpt implements ExcerptInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $locale;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(type="string")
      */
     private $title;
@@ -52,16 +45,13 @@ class Excerpt implements ExcerptInterface
      * @param string $id
      * @param string $entityClass
      * @param string $entityId
-     * @param string $locale
      */
-    public function __construct($id, $entityClass, $entityId, $locale = null)
+    public function __construct($id, $entityClass, $entityId)
     {
         $this->id = $id;
         $this->entityClass = $entityClass;
         $this->entityId = $entityId;
-        $this->locale = $locale;
     }
-
 
     /**
      * Returns id.
@@ -94,16 +84,6 @@ class Excerpt implements ExcerptInterface
     }
 
     /**
-     * Returns locale.
-     *
-     * @return string
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
      * Returns title.
      *
      * @return string
@@ -111,5 +91,19 @@ class Excerpt implements ExcerptInterface
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Set title.
+     *
+     * @param string $title
+     *
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

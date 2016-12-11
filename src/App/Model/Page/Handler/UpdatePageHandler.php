@@ -26,6 +26,6 @@ final class UpdatePageHandler
     public function __invoke(UpdatePage $command)
     {
         $page = $this->pageCollection->get($command->getPageId());
-        $page->update($command->getTitle());
+        $page->update($command->getLocale(), $command->getTitle(), $command->getData());
     }
 }

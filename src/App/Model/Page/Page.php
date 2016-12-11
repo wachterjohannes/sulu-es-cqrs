@@ -17,30 +17,25 @@ class Page extends AggregateRoot
     private $pageId;
 
     /**
-     * @var string
+     * @var PageTranslation[]
      */
-    private $title;
+    private $translations = [];
 
-    /**
-     * @var Excerpt
-     */
-    private $excerpt;
-
-    public static function create($title, PageId $pageId)
+    public static function create(PageId $pageId, $locale, $title, $data)
     {
         Assert::that($title)->string()->notBlank();
 
         $self = new self();
-        $self->recordThat(PageWasCreated::byTitle($pageId, $title));
+        $self->recordThat(PageWasCreated::withData($pageId, $locale, $title, $data));
 
         return $self;
     }
 
-    public function update($title)
+    public function update($locale, $title, $data)
     {
         Assert::that($title)->string()->notBlank();
 
-        $this->recordThat(PageWasUpdated::byTitle($this->pageId, $title));
+        $this->recordThat(PageWasUpdated::withData($this->pageId, $locale, $title, $data));
     }
 
     public function remove()
@@ -48,22 +43,26 @@ class Page extends AggregateRoot
         $this->recordThat(PageWasRemoved::byId($this->pageId));
     }
 
-    public function updateExcerpt($title)
+    public function updateExcerpt($locale, $title)
     {
         Assert::that($title)->string()->notBlank();
 
-        $this->recordThat(ExcerptWasUpdated::byTitle($this->pageId, $title));
+        $this->recordThat(ExcerptWasUpdated::withData($this->pageId, $locale, $title));
     }
 
     protected function whenPageWasCreated(PageWasCreated $event)
     {
         $this->pageId = $event->getPageId();
-        $this->title = $event->getTitle();
+        $this->translations[$event->getLocale()] = new PageTranslation($event->getLocale(), $event->getTitle());
     }
 
     protected function whenPageWasUpdated(PageWasUpdated $event)
     {
-        $this->title = $event->getTitle();
+        if (!array_key_exists($event->getLocale(), $this->translations)) {
+            $this->translations[$event->getLocale()] = new PageTranslation($event->getLocale(), $event->getTitle());
+        }
+
+        $this->translations[$event->getLocale()]->setTitle($event->getTitle());
     }
 
     protected function whenPageWasRemoved(PageWasRemoved $event)
@@ -72,11 +71,11 @@ class Page extends AggregateRoot
 
     protected function whenExcerptWasUpdated(ExcerptWasUpdated $event)
     {
-        if (!$this->excerpt) {
-            $this->excerpt = new Excerpt();
+        if (!$this->translations[$event->getLocale()]->getExcerpt()) {
+            $this->translations[$event->getLocale()]->setExcerpt(new Excerpt());
         }
 
-        $this->excerpt->setTitle($event->getTitle());
+        $this->translations[$event->getLocale()]->getExcerpt()->setTitle($event->getTitle());
     }
 
     protected function aggregateId()

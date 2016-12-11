@@ -9,6 +9,23 @@ Following features will be tested here:
 * Content-Types
   * Scalar (string, int, date, json_serializable)
   * Reference (single and multiple)
+  
+## TODO
+
+- [ ] Content management
+
+  - [ ] Translations
+  - [ ] Ghost
+  - [ ] Shadow
+  - [ ] Content Types
+  - [ ] Excerpts
+  - [ ] Tree
+  - [ ] Versions
+  - [ ] Draftings
+  
+- [ ] Snippets
+- [ ] Articles
+- [ ] ...
 
 ## Installation
 
